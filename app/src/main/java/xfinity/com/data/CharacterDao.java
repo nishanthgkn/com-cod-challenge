@@ -28,4 +28,7 @@ public interface CharacterDao {
 
     @Query("DELETE FROM CharacterDetails")
     void deleteAll();
+
+    @Query("SELECT COUNT(*) FROM CharacterDetails")
+    int numCharacters();
 }
