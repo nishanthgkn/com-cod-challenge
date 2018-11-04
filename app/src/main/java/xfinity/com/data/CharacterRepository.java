@@ -32,35 +32,26 @@ public class CharacterRepository {
     private CharacterDao mCharacterDao;
     private LiveData<List<CharacterDetails>> mAllCharacters;
 
-    public CharacterRepository(Application application) {
+    private static CharacterRepository sInstance;
+
+    private CharacterRepository(Application application) {
         CharacterDatabase db = CharacterDatabase.getDatabase(application);
         mCharacterDao = db.characterDao();
         mAllCharacters = mCharacterDao.getAllCharacters();
 
+        int nCharacterRecords = mCharacterDao.numCharacters();
         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(application);
         sLastSyncTimeInMillis = sp.getLong(XFIN_LAST_SYNC_TIMESTAMP_KEY, 0L);
-        if (dataOutOfSync()) {
-            // fetch and Refresh
-            JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET,
-                    application.getResources().getString(R.string.data_api),
-                    null,
-                    new Response.Listener<JSONObject>() {
-
-                        @Override
-                        public void onResponse(JSONObject response) {
-                            CharacterDetails[] characterDetails = parseCharacterResponse(response);
-                            insert(characterDetails);
-                        }
-                    }, new Response.ErrorListener() {
-
-                @Override
-                public void onErrorResponse(VolleyError error) {
-                    // TODO: Handle error
-
-                }
-            });
-            XfinVolleyClient.getInstance(application).addToRequestQueue(jsonObjectRequest);
+        if (dataOutOfSync() || nCharacterRecords < 1) {
+            fetchCharacterInfo(application);
         }
+    }
+
+    static CharacterRepository getInstance(Application application) {
+        if (sInstance == null) {
+            sInstance = new CharacterRepository(application);
+        }
+        return sInstance;
     }
 
     public LiveData<List<CharacterDetails>> getAllCharacters() {
@@ -136,5 +127,28 @@ public class CharacterRepository {
             mAsyncTaskDao.insertAll(characterDetails);
             return null;
         }
+    }
+
+    private void fetchCharacterInfo(final Application application) {
+        // fetch and Refresh
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET,
+                application.getResources().getString(R.string.data_api),
+                null,
+                new Response.Listener<JSONObject>() {
+
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        CharacterDetails[] characterDetails = parseCharacterResponse(response);
+                        insert(characterDetails);
+                    }
+                }, new Response.ErrorListener() {
+
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                // TODO: Handle error
+
+            }
+        });
+        XfinVolleyClient.getInstance(application).addToRequestQueue(jsonObjectRequest);
     }
 }

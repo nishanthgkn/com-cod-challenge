@@ -19,7 +19,7 @@ public class CharactersViewModel extends AndroidViewModel {
 
     public CharactersViewModel(@NonNull Application application) {
         super(application);
-        mRepository = new CharacterRepository(application);
+        mRepository = CharacterRepository.getInstance(application);
         mAllCharacters = mRepository.getAllCharacters();
         mAllCharacters.observeForever(new Observer<List<CharacterDetails>>() {
             @Override
