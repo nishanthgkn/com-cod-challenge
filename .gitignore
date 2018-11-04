@@ -8,14 +8,18 @@
 # Java class files
 *.class
 
-# Generated files
+# built native files (uncomment if you build your own)
+# *.o
+# *.so
+
+# generated files
 bin/
 gen/
-out/
 
-# Gradle files
+# Ignore gradle files
 .gradle/
 build/
+.idea/
 
 # Local configuration file (sdk path, etc)
 local.properties
@@ -63,3 +67,12 @@ fastlane/Preview.html
 fastlane/screenshots
 fastlane/test_output
 fastlane/readme.md
+
+# Eclipse Metadata
+.metadata/
+
+# Mac OS X clutter
+*.DS_Store
+
+# Windows clutter
+Thumbs.db

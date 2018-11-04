@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">Comcast Apps</string>
+    <string name="view_options">View Options</string>
+    <string name="list">List</string>
+    <string name="grid">Grid</string>
+    <string name="current_view">Current View</string>
+    <string name="search">Search</string>
+</resources>
